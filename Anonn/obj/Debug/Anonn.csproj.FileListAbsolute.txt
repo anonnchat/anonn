@@ -1,0 +1,7 @@
+C:\Users\laz\source\repos\Anonn\Anonn\bin\Debug\Anonn.exe.config
+C:\Users\laz\source\repos\Anonn\Anonn\bin\Debug\Anonn.exe
+C:\Users\laz\source\repos\Anonn\Anonn\bin\Debug\Anonn.pdb
+C:\Users\laz\source\repos\Anonn\Anonn\obj\Debug\Anonn.csprojAssemblyReference.cache
+C:\Users\laz\source\repos\Anonn\Anonn\obj\Debug\Anonn.csproj.CoreCompileInputs.cache
+C:\Users\laz\source\repos\Anonn\Anonn\obj\Debug\Anonn.exe
+C:\Users\laz\source\repos\Anonn\Anonn\obj\Debug\Anonn.pdb
