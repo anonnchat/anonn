@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +6,7 @@ using System.Threading;
 using System.Net;
 using System.Collections.Specialized;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Anonn
 {
@@ -18,7 +19,7 @@ namespace Anonn
             string chat = "";
             string username;
             int version = 0;
-            int cversion = 1;
+            int cversion = 2;
             WebClient client3 = new WebClient();
             version = Int32.Parse(client3.DownloadString("https://anonn.cf/version.txt"));
             if (version > cversion)
