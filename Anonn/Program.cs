@@ -42,13 +42,18 @@ namespace Anonn
             string chat = "";
             string username;
             int version = 0;
-            int cversion = 4;
+            int cversion = 5;
             bool ispublic = false;
             WebClient client3 = new WebClient();
             version = Int32.Parse(client3.DownloadString("https://anonn.cf/version.txt"));
             if (version > cversion)
             {
-                Console.WriteLine("A new update has been released. You can download it at https://anonn.cf\n");
+                Console.WriteLine("A new update has been released. This update is being downloaded. App will close in 10 seconds.\n");
+                using (var client = new WebClient())
+                {
+                    client.DownloadFile("https://anonn.cf/downloads/Anonn.exe", "Anonn_V" + version + ".exe");
+                }
+                Thread.Sleep(10000);
             }
             for (; ; )
             {
@@ -142,7 +147,7 @@ namespace Anonn
                         } while (true);
                         token = (SHA.GenerateSHA256String(token));
                         token = token.ToLower();
-                        string urlAddress = "https://anonn.cf/sessions/public/list/create.php";
+                        string urlAddress = "https://anonn.cf/sessions/public/create.php";
                         using (WebClient client = new WebClient())
                         {
                             var postData = new NameValueCollection()
@@ -167,9 +172,11 @@ namespace Anonn
                     id = "public/list/" + id;
                     Console.Write("Create username: ");
                     username = Console.ReadLine();
-                    Console.WriteLine("\nYou can type PINS to view all pins," +
+                    Console.WriteLine("\nYou can type PINS to view all pins,\n" +
+                        "LEAVE to leave the session\n" +
                         "\nPIN to pin a message (only as owner)" +
-                        "\nAnd WIPE to delete the server (only as owner)\n" +
+                        "\nWIPE to delete the server (only as owner)\n" +
+                        "And CLEARPINS to remove all pins (only as owner)\n" +
                         "Press enter to enter the session.");
                     Console.ReadLine();
                     ispublic = true;
@@ -251,7 +258,7 @@ namespace Anonn
                             }
                         } while (true);
                     }
-                    if (message.Contains("PIN") && message != username + ": PINS" && ispublic == true)
+                    if (message.Contains("PIN") && message != username + ": PINS" && message != username + ": CLEARPINS" && ispublic == true)
                     {
                         Console.WriteLine("Enter the admin password: ");
                         wipepass = "";
@@ -289,16 +296,65 @@ namespace Anonn
                             string pagesource = Encoding.UTF8.GetString(client.UploadValues(urlAddress2, postData));
                         }
                     }
-                    if (message.Contains("PINS"))
+                    if (message.Contains("CLEARPINS") && message != username + ": PINS" && ispublic == true)
                     {
-                        string pins = client2.DownloadString("https://anonn.cf/sessions/" + id + "/pins.txt");
-                        pins = pins.Replace("PIN", "");
-                        for (; ; )
+                        Console.WriteLine("Enter the admin password: ");
+                        wipepass = "";
+                        do
                         {
-                            Console.WriteLine("All pins (press enter to return): \n" + pins);
-                            Console.ReadLine();
-                            break;
+                            ConsoleKeyInfo key = Console.ReadKey(true);
+                            if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
+                            {
+                                wipepass += key.KeyChar;
+                                Console.Write("*");
+                            }
+                            else
+                            {
+                                if (key.Key == ConsoleKey.Backspace && wipepass.Length > 0)
+                                {
+                                    wipepass = wipepass.Substring(0, (wipepass.Length - 1));
+                                    Console.Write("\b \b");
+                                }
+                                else if (key.Key == ConsoleKey.Enter)
+                                {
+                                    break;
+                                }
+                            }
+                        } while (true);
+                        string urlAddress2 = "https://anonn.cf/sessions/" + id + "/clearpins.php";
+                        using (WebClient client = new WebClient())
+                        {
+                            var postData = new NameValueCollection()
+                            {
+                                ["message"] = message,
+                                ["wipepass"] = wipepass,
+                                ["token"] = Settings.token
+                            };
+                            string pagesource = Encoding.UTF8.GetString(client.UploadValues(urlAddress2, postData));
                         }
+                    }
+                    if (message.Contains("PINS") && message != username + ": CLEARPINS")
+                    {
+                        try
+                        {
+                            string pins = client2.DownloadString("https://anonn.cf/sessions/" + id + "/pins.txt");
+                            pins = pins.Replace("PIN", "");
+                            for (; ; )
+                            {
+                                Console.WriteLine("All pins (press enter to return): \n" + pins);
+                                Console.ReadLine();
+                                break;
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine("There are currently no pins.\n");
+                        }
+                    }
+                    if (message.Contains("LEAVE"))
+                    {
+                        Application.Restart();
+                        Environment.Exit(1);
                     }
                     string urlAddress = "https://anonn.cf/sessions/" + id + "/edit.php";
                     using (WebClient client = new WebClient())
