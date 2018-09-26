@@ -42,7 +42,7 @@ namespace Anonn
             string chat = "";
             string username;
             int version = 0;
-            int cversion = 2;
+            int cversion = 4;
             bool ispublic = false;
             WebClient client3 = new WebClient();
             version = Int32.Parse(client3.DownloadString("https://anonn.cf/version.txt"));
@@ -142,7 +142,7 @@ namespace Anonn
                         } while (true);
                         token = (SHA.GenerateSHA256String(token));
                         token = token.ToLower();
-                        string urlAddress = "https://anonn.cf/sessions/public/create.php";
+                        string urlAddress = "https://anonn.cf/sessions/public/list/create.php";
                         using (WebClient client = new WebClient())
                         {
                             var postData = new NameValueCollection()
@@ -158,13 +158,13 @@ namespace Anonn
                 }
                 else if (id == "public")
                 {
-                    string publicDir = "https://anonn.cf/sessions/public/list.txt";
+                    string publicDir = "https://anonn.cf/sessions/public/list.php";
                     WebClient client = new WebClient();
                     string content = client.DownloadString(publicDir);
-                    Console.WriteLine(content);
+                    Console.WriteLine("Current public sessions: \n" + content);
                     Console.WriteLine("Enter the session name you would like to enter: ");
                     id = Console.ReadLine();
-                    id = "public/" + id;
+                    id = "public/list/" + id;
                     Console.Write("Create username: ");
                     username = Console.ReadLine();
                     Console.WriteLine("\nYou can type PINS to view all pins," +
